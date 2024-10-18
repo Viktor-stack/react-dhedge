@@ -7,7 +7,6 @@ import React from "react";
 import Box from "@mui/material/Box";
 
 export const renderButtonBUY = (
-  itTrading: ITradingPoolDetails,
   signal: any,
   index: number,
   theme: Theme,
@@ -25,7 +24,7 @@ export const renderButtonBUY = (
         alignItems: "center"
       }}>
         <Button
-          onClick={() => handleButton(itTrading, signal, handlerDialogModal)}
+          onClick={() => handleButton(signal, handlerDialogModal)}
           key={index}
           color={checkColor(signal.key.toString().split('_'))}
           sx={{

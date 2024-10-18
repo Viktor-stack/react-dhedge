@@ -4,6 +4,7 @@ export interface IMarketForm {
     balance: number,
     // poolBalanceStable: "",
   },
+  spotTokens: ISpotTokens[]
   marketCategory: {
     id: number
     firstCategoryId: number,
@@ -74,4 +75,9 @@ interface ISelectToken {
   amount?: string;
   rate?: string;
   balance?: number;
+}
+
+export interface ISpotTokens {
+  rate: string;
+  symbol: string;
 }

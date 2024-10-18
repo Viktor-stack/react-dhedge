@@ -6,6 +6,7 @@ export const enum ITypeEnums {
   SELECT_SLIPPAGE = "selectSlippage",
   RADIO = "radio",
   SLIDER_ONE = 'sliderOne',
-  SLIDER_TWO = 'sliderTwo'
+  SLIDER_TWO = 'sliderTwo',
+  BUTTON = "BUTTON"
 
 }

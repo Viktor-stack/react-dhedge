@@ -1,4 +1,4 @@
-import {ITradingPoolDetails} from "../../../redux/interface/Trading/ITrading";
+import { ISignal, ITradingPoolDetails } from "../../../redux/interface/Trading/ITrading";
 import {Signals} from "../../../redux/interface/Trading/Signals";
 import {Observer} from "@reduxjs/toolkit";
 // import { IEventCandidate } from "../../../redux/interface/Crypto/ISignals";
@@ -38,11 +38,15 @@ import {Observer} from "@reduxjs/toolkit";
 // }
 
 export const handleButton = (
-  itTrading: ITradingPoolDetails,
-  event: any,
+  signal: ISignal,
   handlerDialogModal: (res: any) => void
 ) => {
-  let res = {poolId: itTrading.pool.id, key: event};
+  let res = {
+    poolId: signal.poolId,
+    key: signal.key,
+    limitCategoryId: signal.limitCategoryId,
+    marketCategoryId: signal.marketCategoryId,
+  };
   handlerDialogModal(res);
 };
 

@@ -35,7 +35,7 @@ const Dashboard = () => {
   const refLink = useRef(null);
   // const [openWinBox, setOpenWinBox] = useState<boolean>(false);
   const refWinBox = useRef<HTMLDivElement>(null);
-  const [event, setEvent] = useState<ISignalCandidate>({
+  const [signal, setSignal] = useState<ISignalCandidate>({
     poolId: 0,
     limitCategoryId: 0,
     marketCategoryId: 0,
@@ -102,7 +102,7 @@ const Dashboard = () => {
   const handleDialogModal = (res: ISignal) => {
     handleClose();
     setIsAlerts(res.poolId);
-    setEvent({
+    setSignal({
       poolId: res.poolId,
       marketCategoryId: res.marketCategoryId,
       limitCategoryId: res.limitCategoryId,
@@ -115,15 +115,15 @@ const Dashboard = () => {
   };
 
 
-  const handleDialogAction = async (type: boolean, percent: number) => {
-    if (type) {
-      await swapPool({ key: event.key, poolId: event.poolId, percent: percent });
-      setOpen(event.poolId);
-      setIsAlerts(null);
-    } else {
-      setIsAlerts(null);
-    }
-  };
+  // const handleDialogAction = async (type: boolean, percent: number) => {
+  //   if (type) {
+  //     await swapPool({ key: event.key, poolId: event.poolId, percent: percent });
+  //     setOpen(event.poolId);
+  //     setIsAlerts(null);
+  //   } else {
+  //     setIsAlerts(null);
+  //   }
+  // };
 
   const handleChangeOpen = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : false);
@@ -270,6 +270,7 @@ const Dashboard = () => {
                     <TabContainer>
                       <WebSocketProvider>
                         <MarketForm
+                          signal={signal}
                           onOpen={setOpenModal}
                           formMeta={MarketMetaForm}
                         />

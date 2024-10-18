@@ -219,7 +219,6 @@ const TableUi: FC<TableUiProps> = ({
                     {signals.map((it, index) => (
                       <Box key={index}>
                         {renderButtonBUY(
-                          itTrading,
                           it,
                           it.id,
                           theme,
@@ -232,7 +231,6 @@ const TableUi: FC<TableUiProps> = ({
                     {signals.map((it, index) => (
                         <Box key={index}>{
                           renderButtonSELL(
-                            itTrading,
                             it,
                             it.id,
                             theme,

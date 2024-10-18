@@ -4,19 +4,22 @@ import { FC } from "react";
 interface Props {
   txCommission: string
   maxFeePerGas: string
+  txAmount: string
+  txCount: string
 }
-const FooterForm:FC<Props> = ({txCommission, maxFeePerGas}) => {
+const FooterForm:FC<Props> = ({txCommission, maxFeePerGas, txAmount, txCount}) => {
+
   return (
     <Box>
-      <Typography
-        textAlign={'right'}
-        variant="body2"
-        color="textSecondary"
-        fontWeight={'bold'}
-        fontSize={'15px'}
-      >
-        1 WBTC = 65782,4534 USDC
-      </Typography>
+      {/*<Typography*/}
+      {/*  textAlign={'right'}*/}
+      {/*  variant="body2"*/}
+      {/*  color="textSecondary"*/}
+      {/*  fontWeight={'bold'}*/}
+      {/*  fontSize={'15px'}*/}
+      {/*>*/}
+      {/*  1 WBTC = 65782,4534 USDC*/}
+      {/*</Typography>*/}
         <Typography
           variant="body2"
           color="textSecondary"
@@ -31,7 +34,7 @@ const FooterForm:FC<Props> = ({txCommission, maxFeePerGas}) => {
           fontSize={'15px'}
           fontWeight={'bold'}
         >
-          Tx Amount: 0.23
+          Tx Amount: {txAmount}
         </Typography>
         <Typography
           variant="body2"
@@ -39,7 +42,7 @@ const FooterForm:FC<Props> = ({txCommission, maxFeePerGas}) => {
           fontSize={'15px'}
           fontWeight={'bold'}
         >
-          Count Amount: 43
+          Count Amount: {txCount}
         </Typography>
       <Box sx={{
         marginTop: '15px'

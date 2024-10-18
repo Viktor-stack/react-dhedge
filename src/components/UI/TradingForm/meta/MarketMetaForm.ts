@@ -19,6 +19,13 @@ export const MarketMetaForm: DirectionOfExchange = {
         }
       },
       {
+        type: ITypeEnums.BUTTON,
+        fieldName: 'buttonAllAmount',
+        disabled: false,
+        ladle: 'Pay with',
+        validatorsProps: {}
+      },
+      {
         type: ITypeEnums.SELECT,
         fieldName: 'tokenFrom',
         disabled: false,

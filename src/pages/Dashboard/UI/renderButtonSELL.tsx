@@ -5,7 +5,6 @@ import {checkColor, handleButton} from "./index";
 import {Theme} from "@mui/material/styles";
 
 export const renderButtonSELL = (
-  itTrading: any,
   signal: any,
   index: number,
   theme: Theme,
@@ -18,7 +17,7 @@ export const renderButtonSELL = (
   ) {
     return (
       <Button
-        onClick={() => handleButton(itTrading, signal, handlerDialogModal)}
+        onClick={() => handleButton(signal, handlerDialogModal)}
         key={index}
         color={checkColor(signal.key.toString().split('_'))}
         sx={{

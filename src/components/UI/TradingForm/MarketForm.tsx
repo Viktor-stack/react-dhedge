@@ -64,12 +64,16 @@ const marksBot = [
     label: "0%"
   },
   {
-    value: 33,
-    label: "33%"
+    value: 25,
+    label: "25%"
   },
   {
     value: 50,
     label: "50%"
+  },
+  {
+    value: 75,
+    label: "75%"
   },
   {
     value: 100,
@@ -104,7 +108,7 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
   const context = useContext(WebSocketContext);
   const theme = useTheme();
   const [valueRangeOne, setValueRangeOne] = useState(0);
-  const [valueRangeTow, setValueRangeTow] = useState(0);
+  const [valueRangeTow, setValueRangeTow] = useState(100);
   const { handleSubmit, control, setValue, formState: { errors } } = useForm({ mode: "onTouched" });
   const [dataSocket, setDataSocket] = useState<IMarketForm | null>(null);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
@@ -196,15 +200,19 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
 
   const selectHandlerFrom = (value = "") => {
     setValue("tokenFrom", value);
-    console.log(value);
     context.socket?.emit("market-select-from", JSON.stringify({ id: value }));
 
   };
   const selectHandlerTo = (value = "") => {
     setValue("tokenTo", value);
-    console.log(value);
     context.socket?.emit("market-select-to", JSON.stringify({ id: value }));
   };
+
+  const selectHandlerSlippage = (value = "") => {
+    setValue("slippage", value);
+    context.socket?.emit("market-slippage", JSON.stringify({ slippage: value }));
+  };
+
 
   const inputHandlerFrom = (value = "") => {
     setValue("payWithAmount", value);
@@ -220,7 +228,7 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
     // }, 1500);
   };
 
-  const handlerAmountButtonAll = (amount = "") => {
+  const handlerAmountButtonAll = (amount = 0) => {
     setValue("payWithAmount", amount);
     context.socket?.emit("market-amount-pay-with", JSON.stringify({ amount: amount }));
   };
@@ -285,14 +293,21 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
           );
         case ITypeEnums.BUTTON:
           return (
-            <Box>
+            <Box key={it.fieldName}>
               {dataSocket?.tokenFrom.selected && (
-                <Button disabled={isDisabled} onClick={() => handlerAmountButtonAll(dataSocket?.tokenFrom?.selected?.amount)} sx={{
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  height: "45px"
-                }} key={it.fieldName} size={"small"} variant={"contained"} color={"success"}>
-                  {Number(dataSocket?.tokenFrom?.selected?.amount).toFixed(10)}
+                <Button disabled={isDisabled}
+                        onClick={() => handlerAmountButtonAll(dataSocket?.tokenFrom?.selected?.balance)} sx={{
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                  height: "45px",
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "column"
+                }} size={"small"} variant={"contained"} color={"success"}>
+                  <Box sx={{
+                    display: "block",
+                    width: "100%"
+                  }}>Max</Box> {Number(dataSocket?.tokenFrom?.selected?.balance).toFixed(10)}
                 </Button>)}
             </Box>
           );
@@ -499,7 +514,7 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
                       value={field.value?.id || field.value}
                       inputRef={field.ref}
                       onBlur={field.onBlur}
-                      onChange={field.onChange}
+                      onChange={(e) => selectHandlerSlippage(e.target.value)}
                       color="success"
                       labelId="demo-simple-select-label"
                       id="demo-simple-select-standard"
@@ -545,6 +560,7 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
                   }}
                   render={({ field }) => (
                     <Slider
+                      disabled={isDisabled}
                       min={0}
                       name={field.name}
                       color={"success"}
@@ -614,6 +630,8 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
                   }}
                   render={({ field }) => (
                     <Slider
+                      defaultValue={100}
+                      disabled={isDisabled}
                       min={0}
                       name={field.name}
                       color={"success"}
@@ -624,7 +642,7 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
                       step={null}
                       valueLabelDisplay="auto"
                       aria-labelledby="input-slider"
-                      marks={marks}
+                      marks={marksBot}
                     />
                   )}
                 />
@@ -716,14 +734,26 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
                       flexDirection: "column",
                       alignItems: "center"
                     }}>
-                      <Box sx={{
-                        color: theme.palette.text.secondary,
-                        fontWeight: "bold",
-                        fontSize: "20px",
-                        padding: "20px"
-                      }}>
-                        $100 000
-                      </Box>
+                      {dataSocket.tokenFrom.selected && (
+                        <>
+                          <Box sx={{
+                            color: theme.palette.text.secondary,
+                            fontWeight: "bold",
+                            fontSize: "20px",
+                            padding: "10px"
+                          }}>
+                            {Number(dataSocket?.tokenFrom?.selected?.rate).toFixed(8)}
+                          </Box>
+                          <Box sx={{
+                            color: theme.palette.text.secondary,
+                            fontWeight: "bold",
+                            fontSize: "20px",
+                            padding: "10px"
+                          }}>
+                            {dataSocket?.tokenFrom?.selected?.maxTxAmount}
+                          </Box>
+                        </>
+                      )}
                     </Box>
                   </Box>
                 </Box>
@@ -748,7 +778,7 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
                       fontWeight: "bold",
                       fontSize: "20px"
                     }}>
-                      (0.20%) $669256
+                      {/*(0.20%) $669256*/}
                     </Box>
                   </Box>
                 </Box>

@@ -69,8 +69,7 @@ interface ISelectToken {
   symbol: string;
   address: string;
   decimals: number;
-  maxTxAmountBuy: number;
-  maxTxAmountSell: number;
+  maxTxAmount: number;
   maxTxRelation: number;
   amount?: string;
   rate?: string;

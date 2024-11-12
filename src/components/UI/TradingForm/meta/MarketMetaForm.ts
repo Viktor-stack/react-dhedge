@@ -1,10 +1,6 @@
 import {ITypeEnums} from "../../../../types/ITypeEnums";
 import {DirectionOfExchange} from "@UI/TradingForm/meta/IFormMeta";
 
-
-
-
-
 export const MarketMetaForm: DirectionOfExchange = {
   tokenFrom: {
     fields: [

@@ -59,13 +59,22 @@ const TabContainer: FC<TabContainerProps> = ({ children }) => {
               fontWeight: "bold",
               fontSize: "20px",
               "&.Mui-selected": {
-                color: theme.palette.success.dark,
+                color: theme.palette.success.dark
               }
-            }} label="Market" {...a11yProps(0)} />
-          <Tab sx={{ width: "50%", color: "#cccccc", fontWeight: "bold", fontSize: "20px",  "&.Mui-selected": {
-                color: theme.palette.success.dark,
-              }}}
-               label="Limit" {...a11yProps(1)} />
+            }}
+            label="Market" {...a11yProps(0)}
+          />
+          {/*<Tab sx={{*/}
+          {/*  width: "50%",*/}
+          {/*  color: "#cccccc",*/}
+          {/*  fontWeight: "bold",*/}
+          {/*  fontSize: "20px",*/}
+          {/*  "&.Mui-selected": {*/}
+          {/*    color: theme.palette.success.dark*/}
+          {/*  }*/}
+          {/*}}*/}
+          {/*     label="Limit" {...a11yProps(1)}*/}
+          {/*/>*/}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>

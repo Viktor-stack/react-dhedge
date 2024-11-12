@@ -1,18 +1,8 @@
 import { FC, useContext, useEffect, useState } from "react";
 import { DirectionOfExchange } from "@UI/TradingForm/meta/IFormMeta";
-import { Controller, set, SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { ITypeEnums } from "../../../types/ITypeEnums";
-import {
-  FormControl,
-  FormHelperText,
-  Input,
-  InputLabel,
-  OutlinedInput,
-  Select,
-  Slider,
-  useTheme
-} from "@mui/material";
-import TextFields from "@mui/material/TextField";
+import { FormControl, FormHelperText, Input, InputLabel, OutlinedInput, Select, Slider, useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import HeaderForm from "@UI/TradingForm/ui/HeaderForm";
@@ -24,6 +14,7 @@ import { IMarketForm } from "../../../redux/interface/Trading/IMarketForm";
 import UiSkeleton from "@UI/Skeleton/Skeleton";
 import { ISignalCandidate } from "../../../redux/interface/Setup/IVolumes";
 import Button from "@mui/material/Button/Button";
+import TextFields from "@mui/material/TextField";
 
 export interface MarketFormProps {
   // onDialog: (event: boolean, percent: number) => void;
@@ -31,6 +22,8 @@ export interface MarketFormProps {
   onOpen: (isOpen: boolean) => void;
   formMeta?: DirectionOfExchange;
   signal?: ISignalCandidate;
+  isDisabled?: boolean;
+  dataSocket?: IMarketForm;
 }
 
 interface ISlippage {
@@ -107,6 +100,7 @@ interface IDataForm {
 const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
   const context = useContext(WebSocketContext);
   const theme = useTheme();
+
   const [valueRangeOne, setValueRangeOne] = useState(0);
   const [valueRangeTow, setValueRangeTow] = useState(100);
   const { handleSubmit, control, setValue, formState: { errors } } = useForm({ mode: "onTouched" });
@@ -141,6 +135,7 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
       </MenuItem>
     ));
   };
+
   const renderSelectTokenTo = () => {
     return dataSocket?.tokenTo.selectTokens.map(({ id, symbol }, index) => (
       <MenuItem key={index} value={id}>
@@ -171,19 +166,28 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
 
   const handleSliderChangeOne = (_event: Event, newValue: number | number[]) => {
     setValueRangeOne(newValue as number);
+    const payWiths = Number(newValue) / 100 * Number(dataSocket?.tokenFrom?.selected?.balance);
+    setValue("payWithAmount", payWiths);
+    context.socket?.emit("market-amount-pay-with", JSON.stringify({ amount: payWiths }));
   };
+
   const handleSliderChangeTow = (_event: Event, newValue: number | number[]) => {
     setValueRangeTow(newValue as number);
+    const amountTx = Number(newValue) / Number(dataSocket?.tokenFrom?.selected?.maxTxAmount) * 100;
+    console.log(amountTx);
+    context.socket?.emit("market-amount-tx", JSON.stringify({ amount: String(amountTx) }));
   };
+
   const handleInputChangeOne = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (Number(event.target.value) > 100) return;
-    // @ts-ignore
-    setValueRangeOne(event.target.value === "" ? 0 : Number(event.target.value++));
+    setValueRangeOne(event.target.value === "" ? 0 : Number(event?.target?.value));
+
   };
+
   const handleInputChangeTow = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (Number(event.target.value) > 100) return;
-    // @ts-ignore
-    setValueRangeTow(event.target.value === "" ? 0 : Number(event.target.value++));
+    setValueRangeTow(event.target.value === "" ? 0 : Number(event?.target?.value));
+
   };
 
   const handleBlur = () => {
@@ -194,15 +198,13 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
     }
   };
 
-  useEffect(() => {
-
-  }, []);
 
   const selectHandlerFrom = (value = "") => {
     setValue("tokenFrom", value);
     context.socket?.emit("market-select-from", JSON.stringify({ id: value }));
 
   };
+
   const selectHandlerTo = (value = "") => {
     setValue("tokenTo", value);
     context.socket?.emit("market-select-to", JSON.stringify({ id: value }));
@@ -216,9 +218,9 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
 
   const inputHandlerFrom = (value = "") => {
     setValue("payWithAmount", value);
+    const payWithAmount = Number(value) / Number(dataSocket?.tokenFrom?.selected?.balance) * 100;
+    setValueRangeOne(payWithAmount);
     context.socket?.emit("market-amount-pay-with", JSON.stringify({ amount: value }));
-    setTimeout(() => {
-    }, 1500);
   };
 
   const inputHandlerTo = (value = "") => {
@@ -230,6 +232,7 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
 
   const handlerAmountButtonAll = (amount = 0) => {
     setValue("payWithAmount", amount);
+    setValueRangeOne(Number(amount) / Number(dataSocket?.tokenFrom?.selected?.balance) * 100);
     context.socket?.emit("market-amount-pay-with", JSON.stringify({ amount: amount }));
   };
 
@@ -363,6 +366,7 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
       }
     });
   };
+
   const renderFormCardsTo = () => {
     return formMeta?.tokenTo.fields.map(it => {
       switch (it.type) {
@@ -480,6 +484,7 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
       }
     });
   };
+
   const renderSelectSlippage = () => {
     return formMeta?.tokenTo.fields.map(it => {
       switch (it.type) {
@@ -789,7 +794,7 @@ const MarketForm: FC<MarketFormProps> = ({ signal, formMeta, onOpen }) => {
                 txAmount={dataSocket.txAmount}
                 txCount={dataSocket.txCount}
               />
-              <ButtonForm onOpen={onOpen} />
+              <ButtonForm dataSocket={dataSocket} isDisabled={isDisabled} onOpen={onOpen} />
             </Box>
           </form>
         </Box>)}

@@ -4,12 +4,18 @@ import { FC, useContext } from "react";
 import { MarketFormProps } from "@UI/TradingForm/MarketForm";
 import { WebSocketContext } from "../../../../shared/utils/websocket/WebSocketContext";
 
-const ButtonForm: FC<MarketFormProps> = ({ onOpen }) => {
+const ButtonForm: FC<MarketFormProps> = ({ dataSocket, isDisabled, onOpen }) => {
   const wsContext = useContext(WebSocketContext);
   const cancelHandler = () => {
     wsContext.socket?.emit("market-delete")
     onOpen(false);
   }
+
+  const swapHandler = () => {
+    wsContext.socket?.emit("market-swap", dataSocket)
+  }
+
+
   return (
     <Box sx={{
       display: "flex",
@@ -18,7 +24,8 @@ const ButtonForm: FC<MarketFormProps> = ({ onOpen }) => {
       marginTop: "15px"
     }}>
       <Button
-        onClick={() => {}}
+        disabled={isDisabled}
+        onClick={swapHandler}
         type={"submit"} sx={{
         fontSize: "20px",
         fontWeight: "bold",
